@@ -1,0 +1,9 @@
+{
+	"Hello!": "Hello!",
+	"Będę uruchamiał serwer na porcie 3000, na adresie 192.168.1.16": "Będę uruchamiał serwer na porcie 3000, na adresie 192.168.1.16",
+	"Będę uruchamiał serwer na porcie %s, na adresie %s": "Będę uruchamiał serwer na porcie %s, na adresie %s",
+	"Nasłuch na porcie %s, na adresie %s": "Nasłuch na porcie %s, na adresie %s",
+	"Korzystam z cookie jar: userdata/bernit78_fr12.json": "Korzystam z cookie jar: userdata/bernit78_fr12.json",
+	"Wywołanie invokeGetData": "Wywołanie invokeGetData",
+	"Uruchamiam ApiHelper, UUID = %s": "Uruchamiam ApiHelper, UUID = %s"
+}
