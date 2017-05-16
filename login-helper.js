@@ -63,7 +63,7 @@ var login = function(networkService, userData) {
 			var respJson = JSON.parse(data.body);
 			var uri = data.response.request.uri;
 			var url = uri.protocol + '//' + uri.host + respJson.url;
-			console.log(`Wynik: ${respJson.success}, url: ${respJson.url}, id gracza: ${respJson.player_id}`);
+			console.log(`Wynik: %s, url: %s, id gracza: %s`,respJson.success,respJson.url,$respJson.player_id);
 			console.log(`url = ${url}`);
 			return networkService.doGet(url);
 		});

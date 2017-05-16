@@ -1,6 +1,16 @@
 var util = require('../util');
 var _ = require('lodash');
 
+var i18n = require('i18n-2');
+var i18nlog = new (require('i18n-2'))({
+    // setup some locales - other locales default to the first locale
+    locales: ['pl', 'en'],
+		directory: './locales',
+		extension: '.json'
+});
+
+i18nlog.setLocale('en');
+
 exports.get = (userData, apiService, definitionService) => {
 	const serviceName = 'OtherPlayerService';
 	const wls = util.writeLogService(userData);
@@ -35,25 +45,25 @@ exports.get = (userData, apiService, definitionService) => {
 					var action = responseData.r1.action;
 					switch (responseData.r1.action) {
 					case 'motivate':
-						action = 'Zmotywowano';
+						action = i18nlog.__('Zmotywowano');
 						break;
 					case 'polish':
-						action = 'Odrestaurowano';
+						action = i18nlog.__('Odrestaurowano');
 						break;
 					}
 					var bDef = definitionService.findBuildingDefinition(responseData.r1.mapEntity.cityentity_id);
 					var player = findPlayer(responseData.r1.mapEntity.player_id);
-					var actionText = `${action} budynek ${bDef.name} gracza ${player.name}. Nagroda:`;
+					var actionText = i18nlog.__(`%s budynek %s gracza %s. Nagroda:`,action,bDef.name,player.name);
 
 					_.each(responseData.r2, r => {
 						if (r.__class__ === 'CityResource') {
 							if (r.money) {
-								wls.writeLog(`${actionText} ${r.money} monet.`);
+								wls.writeLog(`%s %s monet.`,actionText,r.money);
 							} else {
-								wls.writeLog(`${actionText} klasy CityResource.`);
+								wls.writeLog(`%s klasy CityResource.`,actionText);
 							}
 						} else {
-							wls.writeLog(`${actionText} klasa ${r.__class__}.`);
+							wls.writeLog(`%s klasa %s.`,actionText,r.__class__);
 						}
 					});
 				}
@@ -65,13 +75,13 @@ exports.get = (userData, apiService, definitionService) => {
 	var acceptInvitation = function() {
 		var nbList = _(neighbourList).filter(n => !n.is_friend && n.incoming).slice(0, 1).value();
 		if (nbList.length) {
-			wls.writeLog(`Akceptowanie zaproszenia od gracza ${nbList[0].name}`);
+			wls.writeLog(`Akceptowanie zaproszenia od gracza %s`,nbList[0].name);
 			return apiService.doServerRequest('FriendService', [nbList[0].player_id], 'acceptInvitation');
 		}
 		return util.getEmptyPromise(null);
 	};
 
-	wls.writeLog(`Tworzę usługę ${serviceName}`);
+	wls.writeLog(`Tworzę usługę %s`,serviceName);
 
 	return {
 		handleResponse: (rd) => {

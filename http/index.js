@@ -548,7 +548,7 @@ $(function() {
 				tr.find('.bld-revenue').empty().append(getRevenueIconDesc(o.state));
 			}
 			if (!d.is_special && o.type !== 'main_building') {
-				
+
 				tr.find('.delete-btn').click(() => {
 					var dialog = $('#dialog-confirm');
 					dialog.find('span.bld-name').text(d.name);
@@ -987,7 +987,7 @@ $(function() {
 			if (foundDef) {
 				foundDef.id = id;
 			} else {
-				console.log(`Nie znaleziono definicji dla ${id}`);
+				console.log(`Nie znaleziono definicji dla %s`,id);
 			}
 		}
 		return foundDef;

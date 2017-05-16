@@ -6,6 +6,7 @@ var _ = require('lodash');
 var googleHelper = require('./google-helper');
 var loginHelper = require('./login-helper');
 var uuid = require('node-uuid');
+var i18n = require('i18n-2');
 
 var createService = function(userData) {
 	var networkService = ns.get(userData.username + '_' + userData.world);
@@ -14,7 +15,7 @@ var createService = function(userData) {
 	var basePath;
 	var wls = util.writeLogService(userData);
 	const randomGuid = uuid.v4();
-	wls.writeLog(`Uruchamiam ApiHelper, UUID = ${randomGuid}`);
+	wls.writeLog(`Uruchamiam ApiHelper, UUID = %s`,randomGuid);
 
 	var createObject = function(className) {
 		//wls.writeLog('Wywołanie createObject');
@@ -104,10 +105,10 @@ var createService = function(userData) {
 				var defSpan = $('span.flag.' + userData.lang);
 				if (defSpan.length === 1) {
 					selectedSpan = defSpan;
-					wls.writeLog('Found default account for lang = ' + userData.lang + ': ' + defSpan.parent().text());
+					wls.writeLog('Found default account for lang = %s:%s',userData.lang,defSpan.parent().text());
 				}
 			}
-			wls.writeLog('Selecting account: ' + selectedSpan.parent().text());
+			wls.writeLog('Selecting account: %s',selectedSpan.parent().text());
 			//var selectUrl = defSpan.parent().attr('onclick').split('\'')[1];
 			var reqUri = data.response.request.uri;
 			var selectUrl = reqUri.protocol + '//' + reqUri.host + selectedSpan.parent().attr('onclick').split('\'')[1];
