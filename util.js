@@ -1,4 +1,14 @@
 var _ = require('lodash');
+var util = require('util');
+
+var i18nlog = new (require('i18n-2'))({
+    // setup some locales - other locales default to the first locale
+    locales: ['pl', 'en'],
+		directory: './locales',
+		extension: '.json',
+		register: global
+});
+i18nlog.setLocale('en');
 
 var renderTimeSpan = function(seconds, $case) {
 	var units = [{
@@ -37,9 +47,12 @@ var renderTimeSpan = function(seconds, $case) {
 	}
 };
 
-var handleError = function(errorList, msg) {
-	if (msg) {
-		console.error(msg);
+var handleError = function(errorList) {
+	var param = new Array();
+	param[0] = i18nlog.__(`${arguments[0]}`);
+	var args = param.concat(Array.prototype.slice.call(arguments).slice(1));
+	if (arguments[0]) {
+		console.error(args);
 	}
 	if (errorList instanceof Error) {
 		console.error(errorList.stack);
@@ -68,7 +81,7 @@ var extractFlashVar = function($, variableName) {
 			}
 		}
 	});
-	console.log(`extractFlashVar("${variableName}") = "${foundValue}"`);
+	console.log(`extractFlashVar("%s") = "%s"`,variableName,foundValue);
 	return foundValue;
 };
 
@@ -88,15 +101,37 @@ var replaceInArray = function(arr, searchFunc, newValue) {
 };
 
 var writeLogService = function(userData) {
+	var param = new Array();
+
 	return {
-		writeLog: function(msg) {
-			console.log(`${userData.username}(${userData.world}): ${msg}`);
+		writeLog: function() {
+			//arguments[0] = `${userData.username}(${userData.world}): `+arguments[0];
+			arguments[0] = "%s "+arguments[0];
+			var args = Array.prototype.slice.call(arguments);
+			args.splice(1,0,`${userData.username}(${userData.world}): `);
+			console.log.apply(null,args);
+			//console.log(`${userData.username}(${userData.world}): ${msg}`);
 		},
-		writeErr: function(msg) {
-			console.error(`${userData.username}(${userData.world}): ${msg}`);
+		writeErr: function() {
+			//arguments[0] = `${userData.username}(${userData.world}): `+arguments[0];
+			arguments[0] = "%s "+arguments[0];
+			var args = Array.prototype.slice.call(arguments);
+			args.splice(1,0,`${userData.username}(${userData.world}): `);
+			console.error.apply(null,args);
+			//console.error(`${userData.username}(${userData.world}): ${msg}`);
 		}
 	};
 };
+
+
+console.log = function () {
+	var logStdout = process.stdout;
+	var param = new Array();
+	param[0] = "LOG: "+i18nlog.__(`${arguments[0]}`);
+	var args = param.concat(Array.prototype.slice.call(arguments).slice(1));
+	logStdout.write(util.format.apply(null, args) + '\n');
+}
+console.error = console.log;
 
 var intervalPromiseGuard = function(guardObj, intervalInSeconds, callbackReturningPromise) {
 	var sysdate = (new Date()).valueOf();

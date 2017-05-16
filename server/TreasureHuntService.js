@@ -1,6 +1,8 @@
 var util = require('../util');
 var _ = require('lodash');
 
+
+
 exports.get = (userData, apiService) => {
 	const serviceName = 'TreasureHuntService';
 	const wls = util.writeLogService(userData);
@@ -11,7 +13,7 @@ exports.get = (userData, apiService) => {
 
 	const getOverview = () => apiService.doServerRequest(serviceName, [], 'getOverview');
 
-	wls.writeLog(`Tworzę usługę ${serviceName}`);
+	wls.writeLog(`Tworzę usługę %s`,serviceName);
 
 	return {
 		handleResponse: (rd) => {
@@ -34,12 +36,12 @@ exports.get = (userData, apiService) => {
 				const rewards = getTcRewardDesc(travelingTs);
 				if (travelingTs.state.arrival_time * 1000 > sysdate) {
 					if (lastTravelingTc !== travelingTs) {
-						wls.writeLog(`Trwa podróż po skarb: ${rewards}, koniec: ${new Date(travelingTs.state.arrival_time * 1000)}`);
+						wls.writeLog(`Trwa podróż po skarb: %s, koniec: %s`,rewards,new Date(travelingTs.state.arrival_time * 1000));
 						lastTravelingTc = travelingTs;
 					}
 					return Promise.resolve(null);
 				} else {
-					wls.writeLog(`Ukończono podróż po skarb: ${rewards}`);
+					wls.writeLog(`Ukończono podróż po skarb: %s`,rewards);
 				}
 			}
 			const collectableTc = getTcByState('TreasureChestCollectable');

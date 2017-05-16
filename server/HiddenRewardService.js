@@ -1,11 +1,12 @@
 var util = require('../util');
 var _ = require('lodash');
 
+
 exports.get = (userData, apiService) => {
 	const serviceName = 'HiddenRewardService';
 	const wls = util.writeLogService(userData);
 
-	wls.writeLog(`Tworzę usługę ${serviceName}`);
+	wls.writeLog(`Tworzę usługę %s`,serviceName);
 
 	let hiddenRewards = [];
 

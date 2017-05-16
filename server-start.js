@@ -10,12 +10,35 @@ var index = require('./index');
 var fs = require('fs');
 var _ = require('lodash');
 var compression = require('compression');
+var ip = require('ip');
+var util = require('./util')
 
-var isLocal = (process.env.OPENSHIFT_NODEJS_IP === undefined);
+// Connect with i18nize.com
+//var Client = require('i18nize');
+//var client = new Client('1f137193-ce6c-499a-9d29-57569ef203d3', './locales', false);
+//client.getAllLocales();
+
+// Attach the i18n property to the express request object
+// And attach helper methods for use in templates
+
+/*i18n.expressBind(app, {
+    // setup some locales - other locales default to en silently
+    locales: ['pl', 'en'],
+		directory: './locales',
+		extension: '.json',
+    // change the cookie name from 'lang' to 'locale'
+    cookieName: 'locale'
+});*/
+
+
+console.log("Message = %s","test");
+
+//var isLocal = (process.env.OPENSHIFT_NODEJS_IP === undefined);
 
 var server_port = process.env.OPENSHIFT_NODEJS_PORT || 3000;
-var server_ip_address = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1';
-console.log(`Będę uruchamiał serwer na porcie ${server_port}, na adresie ${server_ip_address}`);
+//var server_ip_address = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1';
+var server_ip_address = ip.address(); // my ip address
+console.log(`Będę uruchamiał serwer na porcie %s, na adresie %s`,server_port,server_ip_address);
 
 app.use(compression({
 	filter: function(req, res) {
@@ -29,7 +52,7 @@ app.use('/', express.static('http'));
 app.use('/asset', express.static('static/asset'));
 
 app.listen(server_port, server_ip_address, function () {
-	console.log(`Nasłuch na porcie ${server_port}, na adresie ${server_ip_address}`);
+	console.log(`Nasłuch na porcie %s, na adresie %s`,server_port,server_ip_address);
 });
 app.get('/health', (req, res) => {
 	res.end();
@@ -60,7 +83,7 @@ app.get('/ctrl/getAccountList', (req, res) => {
 app.get('/ctrl/*', (req, res) => {
 	var methodName = req.params[0];
 	if (methodName) {
-		console.log(`${req.query.username}(${req.query.world}): wywołano metodę ${methodName}`);
+		console.log(`%s(%s): wywołano metodę %s`,req.query.username,req.query.world,methodName);
 		var foundAccount = _.find(userSettings.accounts, a => a.username === req.query.username && a.world === req.query.world);
 		if (foundAccount) {
 			var method = foundAccount.gameHelper[methodName];
