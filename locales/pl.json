@@ -5,5 +5,12 @@
 	"Nasłuch na porcie %s, na adresie %s": "Nasłuch na porcie %s, na adresie %s",
 	"Korzystam z cookie jar: userdata/bernit78_fr12.json": "Korzystam z cookie jar: userdata/bernit78_fr12.json",
 	"Wywołanie invokeGetData": "Wywołanie invokeGetData",
-	"Uruchamiam ApiHelper, UUID = %s": "Uruchamiam ApiHelper, UUID = %s"
+	"Uruchamiam ApiHelper, UUID = %s": "Uruchamiam ApiHelper, UUID = %s",
+	"unable to parse locales from file (maybe locales/en.json is empty or invalid .json?): ": "unable to parse locales from file (maybe locales/en.json is empty or invalid .json?): ",
+	"Korzystam z cookie jar: %s": "Korzystam z cookie jar: %s",
+	"%s Uruchamiam ApiHelper, UUID = %s": "%s Uruchamiam ApiHelper, UUID = %s",
+	"%s Uruchamiam %s dla %s": "%s Uruchamiam %s dla %s",
+	"%s Tworzę usługę %s": "%s Tworzę usługę %s",
+	"Logowanie za pomocą konta gry": "Logowanie za pomocą konta gry",
+	"doJQueryRequest: %s": "doJQueryRequest: %s"
 }
