@@ -2,6 +2,7 @@ var _ = require('lodash');
 //var apiHelperFactory = require('../apiHelper');
 var util = require('../util');
 
+
 exports.get = (userData, apiHelper, afterStartGameCallback) => {
 	//const apiHelper = apiHelperFactory.get(userData);
 	const wls = util.writeLogService(userData);
@@ -13,7 +14,7 @@ exports.get = (userData, apiHelper, afterStartGameCallback) => {
 			return sr.__class__ === 'Redirect';
 		});
 		if (foundRedirect) {
-			console.log(`Serwer zwrócił Redirect, message: ${foundRedirect.message}, url: ${foundRedirect.url}`);
+			console.log(`Serwer zwrócił Redirect, message: %s, url: %s`,foundRedirect.message,foundRedirect.url);
 			return foundRedirect.url;
 		}
 		return null;

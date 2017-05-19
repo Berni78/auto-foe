@@ -1,45 +1,30 @@
 var _ = require('lodash');
+var util = require('util');
 
-var renderTimeSpan = function(seconds, $case) {
-	var units = [{
-		seconds: ['sekunda', 'sekundy', 'sekund'],
-		minutes: ['minuta', 'minuty', 'minut'],
-		hours: ['godzina', 'godziny', 'godzin'],
-		days: ['dzień', 'dni', 'dni']
-	}, {
-		seconds: ['sekundy', 'sekund', 'sekund'],
-		minutes: ['minuty', 'minut', 'minut'],
-		hours: ['godziny', 'godzin', 'godzin'],
-		days: ['dnia', 'dni', 'dni']
-	}];
-	var renderUnits = function(amount, unit) {
-		if (amount === 1) {
-			return amount + ' ' + units[$case][unit][0];
-		}
-		var modulo = amount % 10;
-		if (modulo >= 2 && modulo <= 4) {
-			return amount + ' ' + units[$case][unit][1];
-		}
-		return amount + ' ' + units[$case][unit][2];
-	};
-	if (seconds >= 60) {
-		if (seconds >= 60 * 60) {
-			if (seconds >= 60 * 60 * 24) {
-				return renderUnits(Math.floor(seconds / (60 * 60 * 24)), 'days');
-			} else {
-				return renderUnits(Math.floor(seconds / (60 * 60)), 'hours');
-			}
-		} else {
-			return renderUnits(Math.floor(seconds / 60), 'minutes');
-		}
-	} else {
-		return renderUnits(Math.floor(seconds), 'seconds');
-	}
-};
+var i18nlog = new (require('i18n-2'))({
+    // setup some locales - other locales default to the first locale
+    locales: ['en', 'fr', 'pl'],
+		directory: './locales',
+		extension: '.json'
+});
+i18nlog.setLocale('en');
 
-var handleError = function(errorList, msg) {
-	if (msg) {
-		console.error(msg);
+var i18nFront = new (require('i18n-2'))({
+    // setup some locales - other locales default to the first locale
+    locales: ['en', 'fr', 'pl'],
+		directory: './locales',
+		extension: '.json',
+    // change the cookie name from 'lang' to 'locale'
+    cookieName: 'locale'
+
+});
+
+var handleError = function(errorList) {
+	var param = [];
+	param[0] = i18nlog.__(`${arguments[0]}`);
+	var args = param.concat(Array.prototype.slice.call(arguments).slice(1));
+	if (arguments[0]) {
+		console.error(args);
 	}
 	if (errorList instanceof Error) {
 		console.error(errorList.stack);
@@ -68,7 +53,7 @@ var extractFlashVar = function($, variableName) {
 			}
 		}
 	});
-	console.log(`extractFlashVar("${variableName}") = "${foundValue}"`);
+	console.log(`extractFlashVar("%s") = "%s"`,variableName,foundValue);
 	return foundValue;
 };
 
@@ -88,15 +73,36 @@ var replaceInArray = function(arr, searchFunc, newValue) {
 };
 
 var writeLogService = function(userData) {
+
 	return {
-		writeLog: function(msg) {
-			console.log(`${userData.username}(${userData.world}): ${msg}`);
+		writeLog: function() {
+			//arguments[0] = `${userData.username}(${userData.world}): `+arguments[0];
+			arguments[0] = "%s "+arguments[0];
+			var args = Array.prototype.slice.call(arguments);
+			args.splice(1,0,`${userData.username}(${userData.world}): `);
+			console.log.apply(null,args);
+			//console.log(`${userData.username}(${userData.world}): ${msg}`);
 		},
-		writeErr: function(msg) {
-			console.error(`${userData.username}(${userData.world}): ${msg}`);
+		writeErr: function() {
+			//arguments[0] = `${userData.username}(${userData.world}): `+arguments[0];
+			arguments[0] = "%s "+arguments[0];
+			var args = Array.prototype.slice.call(arguments);
+			args.splice(1,0,`${userData.username}(${userData.world}): `);
+			console.error.apply(null,args);
+			//console.error(`${userData.username}(${userData.world}): ${msg}`);
 		}
 	};
 };
+
+
+console.log = function () {
+	var logStdout = process.stdout;
+	var param = [];
+	param[0] = "LOG: "+i18nlog.__(`${arguments[0]}`);
+	var args = param.concat(Array.prototype.slice.call(arguments).slice(1));
+	logStdout.write(util.format.apply(null, args) + '\n');
+};
+console.error = console.log;
 
 var intervalPromiseGuard = function(guardObj, intervalInSeconds, callbackReturningPromise) {
 	var sysdate = (new Date()).valueOf();
@@ -134,7 +140,12 @@ var getTimeout = (remainingTimeInSeconds) => {
 	return sysdate + remainingTimeInSeconds * 1000;
 };
 
-exports.renderTimeSpan = renderTimeSpan;
+var getTranslation = (req,srcLg) => {
+  i18nFront.setLocaleFromCookie(req);
+  console.log("gesTranslation for Locale= %s",i18nFront.getLocale());
+	return i18nFront.__(srcLg);
+};
+
 exports.handleError = handleError;
 exports.getEmptyPromise = getEmptyPromise;
 exports.extractFlashVar = extractFlashVar;
@@ -144,4 +155,5 @@ exports.intervalPromiseGuard = intervalPromiseGuard;
 exports.intervalPromiseGuard2 = intervalPromiseGuard2;
 exports.calculateTimeout = calculateTimeout;
 exports.getTimeout = getTimeout;
+exports.getTranslation = getTranslation;
 exports.createCityGood = (good_id, value) => ({__class__ : 'CityGood', value, good_id});

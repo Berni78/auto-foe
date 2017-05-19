@@ -5,7 +5,7 @@ exports.get = (userData, apiService, resourceService) => {
 	const serviceName = 'ResearchService';
 	const wls = util.writeLogService(userData);
 
-	wls.writeLog(`Tworzę usługę ${serviceName}`);
+	wls.writeLog(`Tworzę usługę %s`,serviceName);
 
 	let researchArray = null;
 
@@ -37,7 +37,7 @@ exports.get = (userData, apiService, resourceService) => {
 			return false;
 		});
 		if (foundTech) {
-			wls.writeLog(`Opłacam technologię ${foundTech.name}`);
+			wls.writeLog(`Opłacam technologię %s`,foundTech.name);
 			return apiService.doServerRequest(serviceName, [foundTech.id], 'payTechnology').then(resourceService.getResources);
 		}
 		return util.getEmptyPromise(null);
@@ -61,7 +61,7 @@ exports.get = (userData, apiService, resourceService) => {
 			});
 			var amountToSpend = 1;
 			if (foundTech) {
-				wls.writeLog(`Wydawanie ${amountToSpend} punktu(ów) na technologię ${foundTech.name}`);
+				wls.writeLog(`Wydawanie %s punktu(ów) na technologię %s`,amountToSpend,foundTech.name);
 				resourceService.decreaseSp(amountToSpend);
 				return apiService.doServerRequest(serviceName, [foundTech.id, amountToSpend], 'useStrategyPoints');
 			}

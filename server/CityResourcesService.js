@@ -1,13 +1,14 @@
 var util = require('../util');
 var _ = require('lodash');
 
+
 exports.get = (userData, apiService) => {
 	const serviceName = 'CityResourcesService';
 	const wls = util.writeLogService(userData);
 
 	let resourceList = null;
 
-	wls.writeLog(`Tworzę usługę ${serviceName}`);
+	wls.writeLog(`Tworzę usługę %s`,serviceName);
 
 	const convertCityResource = function(cr) {
 		if (!cr) {

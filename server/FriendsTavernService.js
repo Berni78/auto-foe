@@ -29,14 +29,14 @@ exports.get = (userData, apiService, otherPlayerService, resourceService, resear
 		return apiService.doApiRequestArray(playersToVisit).then(getOtherTavernStates);
 	});
 
-	wls.writeLog(`Tworzę usługę ${serviceName}`);
+	wls.writeLog(`Tworzę usługę %s`,serviceName);
 
 	return {
 		handleResponse: (rd) => {
 			if (rd.requestMethod === 'getOwnTavern') {
 				tavernData = rd.responseData;
 			} else if (rd.requestMethod === 'collectReward') {
-				wls.writeLog(`Wynik zebrania srebra z tawerny: ${rd.responseData.__class__}`);
+				wls.writeLog(`Wynik zebrania srebra z tawerny: %s`,rd.responseData.__class__);
 			} else if (rd.requestMethod === 'getOtherTavernStates') {
 				//wls.writeLog('Otrzymano odpowiedź z komunikatu getOtherTavernStates');
 				tavernStates = rd.responseData;
@@ -44,7 +44,7 @@ exports.get = (userData, apiService, otherPlayerService, resourceService, resear
 				wls.writeLog('Otrzymano odpowiedź z komunikatu getOtherTavernState');
 				util.replaceInArray(tavernStates, 'ownerId', rd.responseData);
 			} else if (rd.requestMethod === 'getOtherTavern') {
-				wls.writeLog(`Wynik odwiedzenia tawerny: ${rd.responseData.state}`);
+				wls.writeLog(`Wynik odwiedzenia tawerny: %s`,rd.responseData.state);
 			}
 		},
 		getServiceName: () => serviceName,
@@ -54,7 +54,7 @@ exports.get = (userData, apiService, otherPlayerService, resourceService, resear
 					return getOwnTavern();
 				}
 				if (_.size(tavernData.view.visitors) === tavernData.view.unlockedChairs) {
-					wls.writeLog(`W tawernie jest komplet gości: ${tavernData.view.unlockedChairs}, zbieram srebro`);
+					wls.writeLog(`W tawernie jest komplet gości: %s, zbieram srebro`,tavernData.view.unlockedChairs);
 					return collectReward().then(getOwnTavern);
 				}
 				return refreshGuard.invoke()

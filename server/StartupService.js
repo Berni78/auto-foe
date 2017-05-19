@@ -1,13 +1,15 @@
 var util = require('../util');
 var _ = require('lodash');
 
+
+
 exports.get = (userData, apiService, cityMapService, definitionService, cityResourcesService, resourceService) => {
 	const serviceName = 'StartupService';
 	const wls = util.writeLogService(userData);
 
 	let carnivalTimeout = 0;
 
-	wls.writeLog(`Tworzę usługę ${serviceName}`);
+	wls.writeLog(`Tworzę usługę %s`,serviceName);
 
 	return {
 		handleResponse: () => {

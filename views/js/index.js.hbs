@@ -3,22 +3,29 @@ $(function() {
 	var templates = _($('script[type=\'text/x-handlebars-template\']').get()).map(function(e) {
 		return [_.camelCase($(e).attr('id').replace(/template/g, '')), Handlebars.compile($(e).html())];
 	}).fromPairs().value();
+	console.log("****************Templates************");
+	console.log(templates);
+	console.log("****************************");
+
 
 	Handlebars.registerHelper('switchTavernState', function(ts) {
 		if (!ts) {
 			return '';
 		}
+		console.log("***********switchTavernState %s",ts);
 		switch(ts.state) {
 		case 'isSitting':
-			return 'Siedzę';
+			return '{{{__ "Siedzę" }}}';
 		case 'noChair':
-			return 'Brak krzeseł';
+			return '{{{__ "Brak krzeseł" }}}';
 		case 'alreadyVisited':
 			return moment(ts.nextVisitTime * 1000).format('D MMMM HH:mm:ss');
 		default:
 			return ts.state;
 		}
 	});
+
+
 
 	var accountDataDiv = $('.account-data');
 	var resStatList = $('#res-stat-list');
@@ -47,14 +54,14 @@ $(function() {
 	];
 
 	var buildingStates = {
-		'ProducingState': 'Produkuje',
-		'IdleState': 'Bezczynny',
-		'ProductionFinishedState': 'Produkcja ukończona',
-		'ConstructionState': 'Budowanie obiektu',
-		'UnconnectedState': 'Brak połączenia z głównym budynkiem',
-		'PlunderedState': 'Splądrowany',
-		'PolishedState': 'Zmotywowany',
-		'GreatBuildingConstructionState': 'Budowanie perły architektury'
+		'ProducingState': '{{{__ "Produkuje" }}}',
+		'IdleState': '{{{__ "Bezczynny" }}}',
+		'ProductionFinishedState': '{{{__ "Produkcja ukończona" }}}',
+		'ConstructionState': '{{{__ "Budowanie obiektu" }}}',
+		'UnconnectedState': '{{{__ "Brak połączenia z głównym budynkiem" }}}',
+		'PlunderedState': '{{{__ "Splądrowany" }}}',
+		'PolishedState': '{{{__ "Zmotywowany" }}}',
+		'GreatBuildingConstructionState': '{{{__ "Budowanie perły architektury" }}}'
 	};
 
 	var eraList = {
@@ -77,22 +84,22 @@ $(function() {
 	};
 
 	var eraListPl = {
-		'StoneAge' : 'Epoka Kamienia',
-		'BronzeAge' : 'Epoka Brązu',
-		'IronAge' : 'Epoka Żelaza',
-		'EarlyMiddleAge' : 'Wczesne Średniowiecze',
-		'HighMiddleAge' : 'Rozkwit Średniowiecza',
-		'LateMiddleAge' : 'Jesień Średniowiecza',
-		'ColonialAge' : 'Epoka Kolonialna',
-		'IndustrialAge' : 'Epoka Przemysłowa',
-		'ProgressiveEra' : 'Epoka Postępowa',
-		'ModernEra' : 'Modernizm',
-		'PostModernEra' : 'Postmodernizm',
-		'ContemporaryEra' : 'Współczesność',
-		'TomorrowEra' : 'Epoka Jutra',
-		'FutureEra' : 'FUT|Przyszłość',
-		'ArcticFuture' : 'Arktyczna Przyszłość',
-		'OceanicFuture': 'Oceaniczna Przyszłość'
+		'StoneAge' : '{{{__ "Epoka Kamienia" }}}',
+		'BronzeAge' : '{{{__ "Epoka Brązu" }}}',
+		'IronAge' : '{{{__ "Epoka Żelaza" }}}',
+		'EarlyMiddleAge' : '{{{__ "Wczesne Średniowiecze" }}}',
+		'HighMiddleAge' : '{{{__ "Rozkwit Średniowiecza" }}}',
+		'LateMiddleAge' : '{{{__ "Jesień Średniowiecza" }}}',
+		'ColonialAge' : '{{{__ "Epoka Kolonialna" }}}',
+		'IndustrialAge' : '{{{__ "Epoka Przemysłowa" }}}',
+		'ProgressiveEra' : '{{{__ "Epoka Postępowa" }}}',
+		'ModernEra' : '{{{__ "Modernizm" }}}',
+		'PostModernEra' : '{{{__ "Postmodernizm" }}}',
+		'ContemporaryEra' : '{{{__ "Współczesność" }}}',
+		'TomorrowEra' : '{{{__ "Epoka Jutra" }}}',
+		'FutureEra' : '{{{__ "FUT|Przyszłość" }}}',
+		'ArcticFuture' : '{{{__ "Arktyczna Przyszłość" }}}',
+		'OceanicFuture': '{{{__ "Oceaniczna Przyszłość" }}}'
 	};
 
 	var getEraName = function(eraSymbol) {
@@ -189,7 +196,7 @@ $(function() {
 	var setupPauseButton = (isPaused) => {
 		pauseAccountBtn.prop('disabled', !accData || !accData.resourceList);
 		iconSpan.toggleClass('glyphicon-pause', isPaused).toggleClass('glyphicon-play', !isPaused);
-		textSpan.text(isPaused ? 'Włącz pauzę' : 'Wyłącz pauzę');
+		textSpan.text(isPaused ? '{{{__ "Włącz pauzę" }}}' : '{{{__ "Wyłącz pauzę" }}}');
 	};
 
 	pauseAccountBtn.click(() => {
@@ -430,7 +437,7 @@ $(function() {
 			if (def.available_products && def.available_products.length) {
 				var select = $('<select>');
 				select.append(templates.option({
-					name: 'Brak',
+					name: '{{{__ "Brak" }}}',
 					value: '-1'
 				}));
 				_.each(def.available_products, (ap) => {
@@ -548,7 +555,7 @@ $(function() {
 				tr.find('.bld-revenue').empty().append(getRevenueIconDesc(o.state));
 			}
 			if (!d.is_special && o.type !== 'main_building') {
-				
+
 				tr.find('.delete-btn').click(() => {
 					var dialog = $('#dialog-confirm');
 					dialog.find('span.bld-name').text(d.name);
@@ -558,7 +565,7 @@ $(function() {
 						width: 400,
 						modal: true,
 						buttons: {
-							'Usuń': function() {
+							'{{{__ "Usuń" }}}"': function() {
 								getJSON('/ctrl/deleteBuilding', _.assign({
 									bldId: o.id
 								}, ajaxParam), result => {
@@ -579,7 +586,7 @@ $(function() {
 									}
 								});
 							},
-							Anuluj: function() {
+							'{{{__ "Anuluj" }}}': function() {
 								dialog.dialog('close');
 							}
 						}
@@ -740,7 +747,7 @@ $(function() {
 			_(accData.neighbourList).filter(n => !n.is_self).each(n => {
 				list.append(templates.social({
 					name: n.name,
-					motivation: n.__timeout__ ? getTimeoutDescState(n) : 'Niezmotywowany',
+					motivation: n.__timeout__ ? getTimeoutDescState(n) : '{{{__ "Niezmotywowany" }}}',
 					isFriend: n.is_friend,
 					isNeighbour: n.is_neighbor,
 					isGuildMember: n.is_guild_member,
@@ -797,10 +804,10 @@ $(function() {
 					return '';
 				}
 				const typeMapping = {
-					'goods': 'Surowce',
-					'expansion': 'Rozszerzenie',
-					'loot': 'Skarb',
-					'tower': 'Wieża'
+					'goods': '{{{__ "Surowce" }}}',
+					'expansion': '{{{__ "Rozszerzenie" }}}',
+					'loot': '{{{__ "Skarb" }}}',
+					'tower': '{{{__ "Wieża" }}}'
 				};
 				return typeMapping[type];
 			};
@@ -977,17 +984,17 @@ $(function() {
 		});
 		if (!foundDef) {
 			switch (id) {
-			case 'population': foundDef = {name: 'Populacja'}; break;
-			case 'seasonal_resource_vo': foundDef = {name: 'Produkt sezonowy'}; break;
-			case 'premium': foundDef = {name: 'Diamenty'}; break;
-			case 'expansions': foundDef = {name: 'Rozszerzenie terenu'}; break;
-			case 'happiness': foundDef = {name: 'Zadowolenie'}; break;
-			case 'tavern_silver': foundDef = {name: 'Srebrniki'}; break;
+			case 'population': foundDef = {name: '{{{__ "Populacja" }}}'}; break;
+			case 'seasonal_resource_vo': foundDef = {name: '{{{__ "Produkt sezonowy" }}}'}; break;
+			case 'premium': foundDef = {name: '{{{__ "Diamenty" }}}'}; break;
+			case 'expansions': foundDef = {name: '{{{__ "Rozszerzenie terenu" }}}'}; break;
+			case 'happiness': foundDef = {name: '{{{__ "Zadowolenie" }}}'}; break;
+			case 'tavern_silver': foundDef = {name: '{{{__ "Srebrniki" }}}'}; break;
 			}
 			if (foundDef) {
 				foundDef.id = id;
 			} else {
-				console.log(`Nie znaleziono definicji dla ${id}`);
+				console.log(`Nie znaleziono definicji dla %s`,id);
 			}
 		}
 		return foundDef;

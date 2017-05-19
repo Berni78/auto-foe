@@ -8,6 +8,15 @@ var md5 = require('./md5');
 var url = require('url');
 var querystring = require('querystring');
 
+var i18n = require('i18n-2');
+var i18nlog = new (require('i18n-2'))({
+    // setup some locales - other locales default to the first locale
+    locales: ['pl', 'en'],
+		directory: './locales',
+		extension: '.json'
+});
+i18nlog.setLocale('en');
+
 var createService = function(cookieFileName) {
 	var userdataFolderPath = 'userdata';
 	if (!fs.existsSync(userdataFolderPath)) {
@@ -23,7 +32,7 @@ var createService = function(cookieFileName) {
 		fs.closeSync(fs.openSync(cookieJarPath, 'w'));
 	}
 
-	console.log(`Korzystam z cookie jar: ${cookieJarPath}`);
+	console.log(`Korzystam z cookie jar: %s`,cookieJarPath);
 	var cookieJar = request.jar(new FileCookieStore(cookieJarPath));
 
 	var baseRequestOptions = {
@@ -61,7 +70,7 @@ var createService = function(cookieFileName) {
 	};
 
 	var doJQueryRequest = function(method, options) {
-		console.log('doJQueryRequest: ' + options.url);
+		console.log('doJQueryRequest: %s',options.url);
 		return doRequest(method, options, (response, body) => {
 			return {
 				$: cheerio.load(body),
@@ -177,7 +186,7 @@ var createService = function(cookieFileName) {
 
 	var doApiRequest = function(gatewayUrl, reqData) {
 		if (!gatewayUrl) {
-			const msg = 'Parametr gatewayUrl jest null-em';
+			const msg = i18nlog.__('Parametr gatewayUrl jest null-em');
 			console.log(msg);
 			throw new Error(msg);
 		}

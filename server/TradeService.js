@@ -1,11 +1,13 @@
 var util = require('../util');
 var _ = require('lodash');
 
+
+
 exports.get = (userData, apiService, definitionService, cityResourcesService, eraService) => {
 	const serviceName = 'TradeService';
 	const wls = util.writeLogService(userData);
 
-	wls.writeLog(`Tworzę usługę ${serviceName}`);
+	wls.writeLog(`Tworzę usługę %s`,serviceName);
 
 	let tradeOffersArray = null;
 
@@ -93,7 +95,7 @@ exports.get = (userData, apiService, definitionService, cityResourcesService, er
 						var uniqTradeOffers = _(myOffers).filter(t => t.offer.good_id === d.res.id && t.need.good_id === nd.res.id).map(t => t.offer.value).map(a => Math.round(a / 10) * 10).uniq().sort().value();
 						amountToBuy = _(amountTemplateTable).difference(uniqTradeOffers).filter(a => a <= amountToBuy).first();
 						if (amountToBuy !== undefined) {
-							wls.writeLog(`Przygotowuję ofertę zakupu ${amountToBuy} x ${nd.res.name} oferując ${d.res.name} w stosunku 1:1`);
+							wls.writeLog(`Przygotowuję ofertę zakupu %s x %s oferując %s w stosunku 1:1`,amountToBuy,nd.res.name,d.res.name);
 							generatedOffer = createTradeOfferObj(d.res.id, amountToBuy, nd.res.id, amountToBuy);
 							return false;
 						}
@@ -116,7 +118,7 @@ exports.get = (userData, apiService, definitionService, cityResourcesService, er
 				tradeOffersArray = _.filter(responseData, to => to.merchant.player_id !== -1);
 			};
 			var handleAcceptOffer = function(responseData) {
-				wls.writeLog(`Wynik akceptacji oferty handlowej: ${responseData}`);
+				wls.writeLog(`Wynik akceptacji oferty handlowej: %s`,responseData);
 			};
 			switch (rd.requestMethod) {
 			case 'getTradeOffers':
