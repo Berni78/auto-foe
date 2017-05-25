@@ -179,5 +179,10 @@
 	"cookie locale = %s created successfully": "cookie locale = %s created successfully",
 	"gesTranslation for Locale= %s": "gesTranslation for Locale= %s",
 	"Error: read ECONNRESET": "Error: read ECONNRESET",
-	"%s Error: read ECONNRESET\n    at exports._errnoException (util.js:1012:11)\n    at TLSWrap.onread (net.js:563:26)": "%s Error: read ECONNRESET\n    at exports._errnoException (util.js:1012:11)\n    at TLSWrap.onread (net.js:563:26)"
+	"%s Error: read ECONNRESET\n    at exports._errnoException (util.js:1012:11)\n    at TLSWrap.onread (net.js:563:26)": "%s Error: read ECONNRESET\n    at exports._errnoException (util.js:1012:11)\n    at TLSWrap.onread (net.js:563:26)",
+	"submitForm: Wysyłanie danych logowania…": "submitForm: Wysyłanie danych logowania…",
+	"Akcja formularza nie jest pełnym URL-em, doklejam protokół i hosta": "Akcja formularza nie jest pełnym URL-em, doklejam protokół i hosta",
+	"ReferenceError: $respJson is not defined": "ReferenceError: $respJson is not defined",
+	"ReferenceError: $respJson is not defined\n    at submitForm2.then.data (/Users/bernard/Documents/Projets/auto-foe/auto-foe/login-helper.js:66:82)\n    at process._tickCallback (internal/process/next_tick.js:103:7)": "ReferenceError: $respJson is not defined\n    at submitForm2.then.data (/Users/bernard/Documents/Projets/auto-foe/auto-foe/login-helper.js:66:82)\n    at process._tickCallback (internal/process/next_tick.js:103:7)",
+	"%s 2,4": "%s 2,4"
 }

@@ -10,6 +10,12 @@ var index = require('./index');
 var fs = require('fs');
 var _ = require('lodash');
 var compression = require('compression');
+var auth = require('http-auth');
+var basic = auth.basic({
+    realm: "Simon Area.",
+    file: __dirname + "/users.htpasswd"
+});
+
 var ip = require('ip');
 var util = require('./util')
 var i18n = require('i18n-2');
@@ -87,9 +93,9 @@ app.use(function(req, res, next) {
     next();
 });
 
-
-
+app.use(auth.connect(basic));
 app.use('/http', express.static('http'));
+app.use('/asset', express.static('static/asset'));
 
 
 app.get('/', function(req,res){
