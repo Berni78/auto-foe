@@ -2,7 +2,7 @@ var util = require('../util');
 var _ = require('lodash');
 
 
-exports.get = (userData, apiService) => {
+exports.get = (userData, apiService, cityMapService) => {
 	const serviceName = 'CityResourcesService';
 	const wls = util.writeLogService(userData);
 
@@ -59,6 +59,14 @@ exports.get = (userData, apiService) => {
 		getSp: () => resourceList.strategy_points,
 		setSp: newValue => resourceList.strategy_points = newValue,
 		isDeposit: deposit_id => !!_.find(resourceList.goods, g => g.good_id === deposit_id),
+		isProducer: deposit_id => {
+			//console.log(JSON.stringify(cityMapService.getBuildingList()));
+			return !!_.find(cityMapService.getBuildingList().filter(b => {
+			if (b.type === 'goods' && b.connected && b.state.__class__ !== 'ConstructionState') {
+			return true;
+		} else return false;
+}), p => p.state.current_product.deposit_id === deposit_id);
+},
 		getResourceList: () => resourceList,
 		setResourceList: newValue => resourceList = newValue,
 		getAmount: good_id => {

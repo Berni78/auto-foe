@@ -29,6 +29,7 @@ exports.get = (userData, apiService, definitionService) => {
 				}
 			} else if (rd.requestMethod === 'getResourceDefinitions') {
 				definitionService.setResourceDefinitions(rd.responseData);
+				//console.log("****************ResourceDefinitions: %s",JSON.stringify(rd.responseData));
 			}
 		},
 		getServiceName: () => serviceName,

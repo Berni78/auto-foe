@@ -43,11 +43,12 @@ exports.get = (userData, apiService, definitionService, cityResourcesService, er
 			def: def,
 			amount: cityResourcesService.getAmount(tradeRes.id),
 			isDeposit: cityResourcesService.isDeposit('raw_' + tradeRes.id),
+			isProducer: cityResourcesService.isProducer('raw_' + tradeRes.id),
 			eraIndex: eraService.getEraIndex(def.era)
 		};
 	};
 
-	var amountTemplateTable = [10, 20, 50, 100, 200, 500, 1000, 2000, 5000];
+	var amountTemplateTable = [5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000];
 
 	var generateTradeOffers = function() {
 		if (tradeOffersArray === null) {
@@ -63,27 +64,44 @@ exports.get = (userData, apiService, definitionService, cityResourcesService, er
 		//var offerArray = [];
 		var generatedOffer = null;
 		//writeLog(`Generowanie ofert handlowych`);
+		//console.log("**********resByEra:",JSON.stringify(definitionService.getDefinitions().resByEra));
 		_.each(definitionService.getDefinitions().resByEra, era => {
 			if (generatedOffer) {
 				return false;
 			}
 			//writeLog(`Przeglądam zasoby dla ery ${era.eraName}`);
 			var resInfoArray = _.map(era.goods, g => getTradeResInfo(g));
-			var depoArray = _.filter(resInfoArray, r => r.isDeposit);
+			// initialize Resources Info Array for previous Era to trade resources from actual Era for previous Era with a ratio of 2 previous for 1 actual
+			var resPreviousInfoArray = _.map(era.previousEraGoods, g => getTradeResInfo(g));
+
+			// need to have both depo and resourceBuilding to trade goods isDeposit and isProducer true
+			var depoArray = _.filter(resInfoArray, r => r.isDeposit && r.isProducer);
 			var depoLength = depoArray.length;
 			if (depoLength === 0) {
 				return false;
 			}
-			var noDepoArray = _.filter(resInfoArray, r => !r.isDeposit);
+			var noDepoArray = _.filter(resInfoArray, r => !r.isDeposit || !r.isProducer);
+			var noPreviousDepoArray = _.filter(resPreviousInfoArray, r => !r.isDeposit || !r.isProducer);
+
 			_.each(resInfoArray, d => {
 				d.amountWithOffers = d.amount + getAmountInTradeOffers(d.res.id);
 			});
+			_.each(resPreviousInfoArray, d => {
+				d.amountWithOffers = d.amount + getAmountInTradeOffers(d.res.id);
+			});
+			//console.log("**********resInfoArray:",JSON.stringify(resInfoArray));
+			//console.log("**********resPreviousInfoArray:",JSON.stringify(resPreviousInfoArray));
+
 			var medAmount = _.meanBy(resInfoArray, 'amountWithOffers');
+			var medPreviousAmount = _.meanBy(resPreviousInfoArray, 'amountWithOffers');
+
 			_.each(depoArray, d => {
 				if (generatedOffer) {
 					return false;
 				}
 				var amountToSell = Math.round(d.amount - medAmount);
+				var amountPreviousToSell = Math.round(d.amount - medPreviousAmount);
+				//console.log("Trade Same Era:%s|Avg Resource All:%d|Depo Resource to trade:%s|Amount to sell:%d",d.res.era,medAmount,d.res.name,amountToSell);
 				if (amountToSell >= 10) {
 					//writeLog(`Jest potencjał do sprzedaży ${d.res.name}`);
 					_.each(noDepoArray, nd => {
@@ -94,9 +112,34 @@ exports.get = (userData, apiService, definitionService, cityResourcesService, er
 						var amountToBuy = medAmount - nd.amount - needAmount;
 						var uniqTradeOffers = _(myOffers).filter(t => t.offer.good_id === d.res.id && t.need.good_id === nd.res.id).map(t => t.offer.value).map(a => Math.round(a / 10) * 10).uniq().sort().value();
 						amountToBuy = _(amountTemplateTable).difference(uniqTradeOffers).filter(a => a <= amountToBuy).first();
+						//console.log("Trade Era:%s|No depo Resource to buy:%s|Needed Amount:%d|Amount to Buy:%d",nd.res.era,nd.res.name,needAmount,amountToBuy);
 						if (amountToBuy !== undefined) {
 							wls.writeLog(`Przygotowuję ofertę zakupu %s x %s oferując %s w stosunku 1:1`,amountToBuy,nd.res.name,d.res.name);
-							generatedOffer = createTradeOfferObj(d.res.id, amountToBuy, nd.res.id, amountToBuy);
+							//console.log("CreateOffer Era:%s|Depo Resource to Sell:%s/Qty:%d for Resource to buy:%s/Qty:%d",nd.res.era,d.res.name,amountToBuy,nd.res.name,amountToBuy);
+						generatedOffer = createTradeOfferObj(d.res.id, amountToBuy, nd.res.id, amountToBuy);
+							return false;
+						}
+					});
+				}
+				//console.log("Trade Previous Era:%s|Avg Resource All:%d|Depo Resource to trade:%s|Amount to sell:%d",d.res.era,medPreviousAmount,d.res.name,amountPreviousToSell);
+				if (amountPreviousToSell >= 5) {
+					//writeLog(`Jest potencjał do sprzedaży ${d.res.name}`);
+					_.each(noPreviousDepoArray, nd => {
+						if (generatedOffer) {
+							return false;
+						}
+						var needAmount = getAmountInTradeOffersNeed(d.res.id, nd.res.id);
+						var amountToBuy = medPreviousAmount - nd.amount - needAmount;
+						//console.log("Trade Previous Era:%s|No Depo Resource to buy:%s|Needed Amount:%d|Avg Previous Amount:%d|No Depo Amoun:%d|Amount to Buy:%d",nd.res.era,nd.res.name,needAmount,medPreviousAmount,nd.amount,amountToBuy);
+						var uniqTradeOffers = _(myOffers).filter(t => t.offer.good_id === d.res.id && t.need.good_id === nd.res.id).map(t => t.offer.value).map(a => Math.round(a / 10) * 10).uniq().sort().value();
+						//console.log("myOffers: %s",JSON.stringify(myOffers));
+						//console.log("uniqTradeOffers: %s",JSON.stringify(uniqTradeOffers));
+						amountToBuy = _(amountTemplateTable).difference(uniqTradeOffers).filter(a => a <= amountToBuy).last();
+						//console.log("Trade Previous Era:%s|No Depo Resource to buy:%s|Needed Amount:%d|Amount to Buy:%d",nd.res.era,nd.res.name,needAmount,amountToBuy);
+						if (amountToBuy !== undefined) {
+							wls.writeLog(`Przygotowuję ofertę zakupu %s x %s oferując %s w stosunku 1:2`,amountToBuy,nd.res.name,d.res.name);
+							//console.log("CreateOffer Era:%s|Depo Resource to Sell:%s/Qty:%d for Trade Previous Era:%s|RNo Depo esource to buy:%s/Qty:%d",d.res.era,d.res.name,amountToBuy,nd.res.era,nd.res.name,amountToBuy*2);
+							generatedOffer = createTradeOfferObj(d.res.id, amountToBuy, nd.res.id, amountToBuy*2);
 							return false;
 						}
 					});

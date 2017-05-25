@@ -1,6 +1,8 @@
 var util = require('../util');
 var _ = require('lodash');
 
+//exports.get = (userData, definitionService, resourceService, apiService) => {
+
 exports.get = (userData, definitionService, resourceService, apiService) => {
 	const serviceName = 'CityMapService';
 
@@ -8,6 +10,8 @@ exports.get = (userData, definitionService, resourceService, apiService) => {
 
 	let lastRefresh = {};
 	const wls = util.writeLogService(userData);
+
+	wls.writeLog(`Tworzę usługę %s`,serviceName);
 
 	const calculateTimeout = () => _.each(buildingList, b => util.calculateTimeout(b.state, 'next_state_transition_in'));
 
@@ -17,7 +21,7 @@ exports.get = (userData, definitionService, resourceService, apiService) => {
 			wls.writeLog(`${serviceName}.${methodName}(${buildingId})`);
 
 			const returnMessage = (msg) => {
-				wls.writeLog(msg);
+				//wls.writeLog(msg);
 				return util.getEmptyPromise({status: msg});
 			};
 
@@ -64,9 +68,13 @@ exports.get = (userData, definitionService, resourceService, apiService) => {
 		},
 		getServiceName: () => serviceName,
 		setBuildingList: (bl) => {
+			//console.log("setBuildingList : %s",JSON.stringify(bl));
 			buildingList = bl;
 		},
-		getBuildingList: () => buildingList,
+		getBuildingList: () => {
+			//console.log("getBuildingList : %s",JSON.stringify(buildingList));
+			return buildingList;
+		},
 		updateBuildingList: newBuildingList => {
 			_.each(newBuildingList, b => util.replaceInArray(buildingList, 'id', b));
 			calculateTimeout();

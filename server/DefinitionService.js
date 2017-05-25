@@ -33,7 +33,12 @@ exports.get = (userData) => {
 					era: era,
 					eraName: eraService.getEraName(era),
 					eraIndex: eraService.getEraIndex(era),
-					goods: _(definitions.resources).filter(d => d.era === era).value()
+					goods: _(definitions.resources).filter(d => d.era === era).value(),
+					previousEra: eraService.getPreviousEraSymbol(era),
+					previousEraName: eraService.getEraName(eraService.getPreviousEraSymbol(era)),
+					previousEraIndex: eraService.getEraIndex(eraService.getPreviousEraSymbol(era)),
+					previousEraGoods: _(definitions.resources).filter(d => d.era === eraService.getPreviousEraSymbol(era)).value(),
+
 				};
 			}).value();
 		},
