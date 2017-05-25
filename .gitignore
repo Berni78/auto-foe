@@ -2,3 +2,9 @@ node_modules/
 log/
 userdata/
 .tscache/
+
+users.htpasswd
+
+userdata/settings.json
+
+userdata/bernit78_fr12.json
