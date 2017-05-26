@@ -75,12 +75,12 @@ app.use(function (req, res, next) {
     // no: set a new cookie
     //res.cookie('locale','fr', { maxAge: 900000, httpOnly: true });
 		res.cookie('locale',req.acceptsLanguages('fr','en','pl'), { maxAge: 900000, httpOnly: true });
-    console.log('cookie locale = %s created successfully',req.acceptsLanguages('fr','en','pl'));
+    //console.log('cookie locale = %s created successfully',req.acceptsLanguages('fr','en','pl'));
   }
   else
   {
     // yes, cookie was already present
-    console.log('cookie exists locale = %s', cookie);
+    //console.log('cookie exists locale = %s', cookie);
   }
   next(); // <-- important!
 });

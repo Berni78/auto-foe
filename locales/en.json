@@ -184,5 +184,7 @@
 	"Akcja formularza nie jest pełnym URL-em, doklejam protokół i hosta": "Akcja formularza nie jest pełnym URL-em, doklejam protokół i hosta",
 	"ReferenceError: $respJson is not defined": "ReferenceError: $respJson is not defined",
 	"ReferenceError: $respJson is not defined\n    at submitForm2.then.data (/Users/bernard/Documents/Projets/auto-foe/auto-foe/login-helper.js:66:82)\n    at process._tickCallback (internal/process/next_tick.js:103:7)": "ReferenceError: $respJson is not defined\n    at submitForm2.then.data (/Users/bernard/Documents/Projets/auto-foe/auto-foe/login-helper.js:66:82)\n    at process._tickCallback (internal/process/next_tick.js:103:7)",
-	"%s 2,4": "%s 2,4"
+	"%s 2,4": "%s 2,4",
+	"%s 30, getEvents, OtherPlayerService": "%s 30, getEvents, OtherPlayerService",
+	"%s 32, getOwnTavern, FriendsTavernService": "%s 32, getOwnTavern, FriendsTavernService"
 }
